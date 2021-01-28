@@ -1,8 +1,11 @@
 import React from "react";
+
 export const NewPost = () => {
   const [postData, setPostData] = React.useState([]);
-  const [newPostName, setNewPostName] = React.useState("");
+  const [titleName, setTitleName] = React.useState("");
+  const [newContent, setNewContent] = React.useState("");
   const [showPost, setPost] = React.useState(false);
+  const currDate = Date().toLocaleString();
   // const [selectedSite, setSelectedSite] = React.useState({});
 
   React.useEffect(() => {
@@ -17,7 +20,7 @@ export const NewPost = () => {
       .then((res) => res.json()) //converts to json
       .then(
         (result) => {
-          const newData = result[0].data;
+          const newData = result[0].blogPosts;
           setPostData(newData);
         },
         (error) => {
@@ -26,16 +29,21 @@ export const NewPost = () => {
       );
   }, []); // [] = runs code before the component
 
-  const onNameChange = (event) => {
-    setNewPostName(event.target.value);
+  const onTitleChange = (event) => {
+    setTitleName(event.target.value);
+  };
+  const onContentChange = (event) => {
+    setNewContent(event.target.value);
   };
 
   const addPost = (event) => {
     const data = {
       id: postData[postData?.length - 1].id + 1,
-      blogName: newPostName,
+      title: titleName,
+      contents: newContent,
+      date: currDate,
     };
-    fetch("http://localhost:3012/createNewPost", {
+    fetch("http://localhost:3014/sendBlogPosts", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -57,12 +65,15 @@ export const NewPost = () => {
     <div className="justify-center">
       <form>
         <h1>Create New Post</h1>
+        <input type="file" className="filetype" id="group_image" />
+        <p> Date posted: {currDate}</p>
+        <br></br>
         <input
           type="text"
           placeHolder="title"
           size="39"
           required
-          onChange={onNameChange}
+          onChange={onTitleChange}
         />
         <br />
         <br />
@@ -72,7 +83,7 @@ export const NewPost = () => {
           rows="8"
           cols="41"
           required
-          // onChange={onChange}
+          onChange={onContentChange}
         ></textarea>
         <br />
         <br />

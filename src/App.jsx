@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import fire from "./firebase";
-import Login from './components/Login';
+import Login from "./components/Login";
 import "./App.css";
-import Blog from './components/Blog'
+import { Blog } from "./components/blog.jsx";
 
-const App = () => {
+export const App = () => {
   const [user, setUser] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -77,26 +77,24 @@ const App = () => {
     authListener();
   }, []);
 
-  return(
-<div className= "App">
-  {user ? (
-    <Blog handleLogout={handleLogout}/>
-  ) : (
-  <Login 
-  email={email}
-  setEmail={setEmail}
-  password={password}
-  setPassword={setPassword}
-  handleLogin={handleLogin}
-  handleSignUp={handleSignUp}
-  hasAccount={hasAccount}
-  setHasAccount={setHasAccount}
-  emailError={emailError}
-  passwordError={passwordError}
- />
-  )}
-</div>
-  )
+  return (
+    <div className="App">
+      {user ? (
+        <Blog handleLogout={handleLogout} />
+      ) : (
+        <Login
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          handleLogin={handleLogin}
+          handleSignUp={handleSignUp}
+          hasAccount={hasAccount}
+          setHasAccount={setHasAccount}
+          emailError={emailError}
+          passwordError={passwordError}
+        />
+      )}
+    </div>
+  );
 };
-
-export default App;

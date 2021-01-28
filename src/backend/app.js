@@ -43,8 +43,15 @@ app.get("/getBlogPosts", (request, response) => {
 app.post("/sendBlogPosts", (req, res) => {
   // when user enters info it will be stored in the body
   //req.data sends the stored infomation to express server
+  console.log("i am here");
   const data = req.body;
-  const body = { title: data.title, contents: "the contents", id: -4 };
+  const body = {
+    title: data.title,
+    contents: data.contents,
+    date: data.date,
+    id: data.id,
+  };
+  console.log(body);
   MongoClient.connect(
     CONNECTION_URL,
     { useNewUrlParser: true },
@@ -55,9 +62,9 @@ app.post("/sendBlogPosts", (req, res) => {
       database = client.db(DATABASE_NAME);
       collection = database.collection("post_data");
       //Updates a single document within the collection based on the filter.
-      //$push: append to  the body and is what is being updated by .updateOne
+      //$push: append  the body to the collection and is what is being updated by .updateOne
       //{}: is the document
-      collection.updateOne({}, { $push: { data: body } }, (error, obj) => {
+      collection.updateOne({}, { $push: { blogPosts: body } }, (error, obj) => {
         if (error) {
           return res.status(500).send(error);
         }
@@ -74,6 +81,7 @@ app.post("/createNewPost", (request, response) => {
       {
         title: "",
         contents: "",
+        date: "",
       },
     ],
   };

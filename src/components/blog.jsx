@@ -1,15 +1,17 @@
-import { render } from "@testing-library/react";
 import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import CreatePost from "../Routes/CreatePost";
-import MyPosts from "../Routes/MyPosts";
+import { MyPosts } from "../Routes/my-posts";
+import { Home } from "../Routes/home";
 
-const Blog = ({ handleLogout }) => {
+export const Blog = ({ handleLogout }) => {
   return (
     <section className="blog">
       <Router>
         <nav>
-          <h2>BLOG SPOT</h2>
+          <Link to="/home">
+            <div className="blog-right">BLOG SPOT</div>
+          </Link>
 
           <Link to="/create-post">
             <div className="blog-right">Create Post</div>
@@ -28,6 +30,9 @@ const Blog = ({ handleLogout }) => {
           <Route exact path="/my-posts">
             <MyPosts />
           </Route>
+          <Route exact path="/home">
+            <Home />
+          </Route>
           {/* <Route exact path="/">
             <Blog />
           </Route> */}
@@ -36,5 +41,3 @@ const Blog = ({ handleLogout }) => {
     </section>
   );
 };
-
-export default Blog;
