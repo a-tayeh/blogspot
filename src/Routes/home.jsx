@@ -3,6 +3,7 @@ import React from "react";
 import { Button, Card } from "react-bootstrap";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { CurrentPost } from "../components/current-post";
+import "../../src/Box.css";
 
 export const Home = () => {
   const [posts, setPosts] = React.useState([]);
@@ -42,7 +43,7 @@ export const Home = () => {
     setViewPost(true);
   };
   return !viewPost ? (
-    <div className="container">
+    <div className="grid">
       {posts.map((post) => (
         <div
           onClick={() =>
@@ -54,18 +55,20 @@ export const Home = () => {
             })
           }
         >
-          <Card class="card-horizontal">
-            <Card.Img variant="top" src={logo} />
-            <Card.Body>
-              <Card.Title>{post.title}</Card.Title>
-              <p>{new Date(post.date)?.toDateString()}</p>
-              <p>{post?.author?.length > 0 ? post.author : ""}</p>
-              <Card.Text className="text-truncate">
-                {" "}
-                <button class="content-button">{post.contents}</button>{" "}
-              </Card.Text>
-            </Card.Body>
-          </Card>
+          <div class="box">
+            <Card>
+              <Card.Img variant="top" src={logo} />
+              <Card.Body>
+                <Card.Title>{post.title}</Card.Title>
+                <p>{new Date(post.date)?.toDateString()}</p>
+                <p>{post?.author?.length > 0 ? post.author : ""}</p>
+                <Card.Text className="text-truncate">
+                  {" "}
+                  <button class="content-button">{post.contents}</button>{" "}
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </div>
         </div>
       ))}
     </div>

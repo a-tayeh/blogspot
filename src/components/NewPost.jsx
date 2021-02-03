@@ -73,6 +73,7 @@ export const NewPost = () => {
         <p> Date posted: {currDate}</p>
         <br></br>
         <input
+          className="title"
           type="text"
           placeHolder="title"
           size="39"
@@ -82,7 +83,7 @@ export const NewPost = () => {
         <br />
         <br />
         <textarea
-          className="center"
+          className="content"
           placeHolder="contents"
           rows="8"
           cols="41"

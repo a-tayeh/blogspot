@@ -147,14 +147,14 @@ button {
   width: 15%;
 }
 input[type="text"] {
-  width: 50%;
+  width: 70%;
   padding: 12px 20px;
   margin: 8px 0;
   box-sizing: border-box;
 }
 
 textarea {
-  width: 50%;
+  width: 70%;
   height: 150px;
   padding: 12px 20px;
   box-sizing: border-box;
@@ -165,7 +165,28 @@ textarea {
 }
 
 form {
-  background: #00000075;
+  position: center;
+  /* background: #07000075; */
   padding: 1.5em;
-  border-radius: 1em;
+  border-radius: 1px;
+  width: 50%;
+}
+
+.box {
+  border-radius: 10px 10px 10px 10px;
+  overflow: hidden;
+  height: 200px;
+  max-height: 35vh;
+  -webkit-box-shadow: 0px 12px 18 px -6 rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 12px 18 px -6 rgba(0, 0, 0, 0.3);
+}
+
+.grid {
+  min-height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+.grid > div {
+  flex-basis: calc(20% - 40px);
 }
