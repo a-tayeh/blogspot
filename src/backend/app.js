@@ -50,6 +50,7 @@ app.post("/sendBlogPosts", (req, res) => {
     contents: data.contents,
     date: data.date,
     id: data.id,
+    author: data.author,
   };
   console.log(body);
   MongoClient.connect(
@@ -82,6 +83,8 @@ app.post("/createNewPost", (request, response) => {
         title: "",
         contents: "",
         date: "",
+        author: "",
+        comments:""
       },
     ],
   };

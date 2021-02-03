@@ -1,3 +1,4 @@
+import { queryAllByDisplayValue } from "@testing-library/react";
 import React from "react";
 import { Button, Card } from "react-bootstrap";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
@@ -5,8 +6,9 @@ import { CurrentPost } from "../components/current-post";
 
 export const Home = () => {
   const [posts, setPosts] = React.useState([]);
+  const [viewPost, setViewPost] = React.useState(false);
   const [articlePage, setArticlePage] = React.useState("");
-
+  const [selectedPost, setSelectedPost] = React.useState({});
   React.useEffect(() => {
     fetch("http://localhost:3014/getBlogPosts", {
       method: "GET",
@@ -28,39 +30,54 @@ export const Home = () => {
       );
   }, []);
 
-  // const onChange = (event) => {
-  //   <Router>
-  //     <Link to="/current-post"></Link>
+  const logo = require("../logo.svg");
 
-  //     <Switch>
-  //       <Route exact path="/current-Post">
-  //         <CurrentPost />
-  //       </Route>
-  //     </Switch>
-  //   </Router>;
-  // };
-  // const routeTo = () => {
-  //   window.open("http://localhost:3000/current-post"); //This will open Google in a new
-  // };
-
-  const goToCarddetails = (cardId) => {
-    localStorage.setItem("selectedCard", cardId);
-    this.props.history.push("/current-post");
-    // you can manage here to pass the clicked card id to the card details page if needed
+  const handleClickedPost = (data) => {
+    setSelectedPost({
+      cardTitle: data.cardTitle,
+      cardDate: data.cardDate,
+      cardBody: data.cardBody,
+      author: data.author,
+    });
+    setViewPost(true);
   };
-
-  return (
+  return !viewPost ? (
     <div className="container">
       {posts.map((post) => (
-        <Card style={{ width: "18rem" }}>
-          <Card.Img variant="top" src="holder.js/100px180" />
-          <Card.Body>
-            <Card.Title>{post.title}</Card.Title>
-            <p>{post.date}</p>
-            <Card.Text>{post.contents} </Card.Text>
-          </Card.Body>
-        </Card>
+        <div
+          onClick={() =>
+            handleClickedPost({
+              cardTitle: post.title,
+              cardDate: post.date,
+              cardBody: post.contents,
+              author: post.author || "",
+            })
+          }
+        >
+          <Card class="card-horizontal">
+            <Card.Img variant="top" src={logo} />
+            <Card.Body>
+              <Card.Title>{post.title}</Card.Title>
+              <p>{new Date(post.date)?.toDateString()}</p>
+              <p>{post?.author?.length > 0 ? post.author : ""}</p>
+              <Card.Text className="text-truncate">
+                {" "}
+                <button class="content-button">{post.contents}</button>{" "}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </div>
       ))}
+    </div>
+  ) : (
+    <div className="container">
+      <button onClick={() => setViewPost(false)}>go back</button>
+      <CurrentPost
+        cardBody={selectedPost.cardBody}
+        cardTitle={selectedPost.cardTitle}
+        cardDate={selectedPost.cardDate}
+        author={selectedPost.author}
+      />
     </div>
   );
 };

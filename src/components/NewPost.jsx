@@ -1,4 +1,5 @@
 import React from "react";
+import firebase from "../firebase";
 
 export const NewPost = () => {
   const [postData, setPostData] = React.useState([]);
@@ -37,11 +38,14 @@ export const NewPost = () => {
   };
 
   const addPost = (event) => {
+    const author = firebase.auth().currentUser.email;
+
     const data = {
       id: postData[postData?.length - 1].id + 1,
       title: titleName,
       contents: newContent,
       date: currDate,
+      author: author,
     };
     fetch("http://localhost:3014/sendBlogPosts", {
       method: "POST",

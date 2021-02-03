@@ -5,39 +5,6 @@
   font-family: "Nunito", sans-serif;
 }
 
-.card-body {
-  max-width: 250px;
-  padding-left: 10px;
-  margin-top: 0px;
-  transition: 0.3s;
-  -webkit-transition: 0.3s;
-}
-
-.card-deck {
-  margin-bottom: 3.2rem;
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.inner {
-  overflow: hidden;
-  transition: max-height 0.2s ease;
-}
-
-.link-with-preview {
-  position: relative;
-}
-
-.card img {
-  width: 150px;
-}
-
-.card-title {
-  font-size: 14px;
-}
-
 button {
   border: none;
   outline: none;
@@ -50,6 +17,18 @@ button {
   cursor: pointer;
   white-space: nowrap;
 }
+.content-button {
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 15px 0;
+  color: rgb(0, 0, 0);
+  font-size: 16px;
+  letter-spacing: 1px;
+  background: white;
+  cursor: pointer;
+  white-space: nowrap;
+}
 
 .login {
   width: 100%;
@@ -57,6 +36,10 @@ button {
   padding: 0 20px;
 
   display: flex;
+}
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  width: 30rem;
 }
 
 .login .loginContainer {
