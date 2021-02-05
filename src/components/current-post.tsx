@@ -77,19 +77,30 @@ export const CurrentPost: React.FC<props> = ({
   const date = new Date(cardDate);
   return (
     <div className="container">
+      <br></br>
       <h3>{cardTitle}</h3>
 
       <h4>{date?.toDateString()}</h4>
       <h4>{author}</h4>
       <p>{cardBody}</p>
       <div>
+        <br></br>
+        <br></br>
         <textarea
           className="center"
           placeholder="comment"
           onChange={onCommentChange}
         ></textarea>
-        <button onClick={addComment}> post comment </button>
+        <br></br>
+        <button className="post" onClick={addComment}>
+          {" "}
+          post
+        </button>
+        <br></br>
+        <br></br>
+        <br></br>
       </div>
+      <br></br>
       <div>
         <Comments postId={postId} />
       </div>

@@ -130,26 +130,27 @@ app.post("/addComments", (request, response) => {
   };
   const commentData = request.body.commentData; // second step, use $push to push commentData into commentsArray
   let postCollection;
-  MongoClient.connect(
-    CONNECTION_URL,
-    { useNewUrlParser: true },
-    (error, client) => {
-      if (error) {
-        throw error;
-      }
-      database = client.db(DATABASE_NAME); // pointing to database
-      postCollection = database.collection("post_data"); // point to collection
-      postCollection.updateOne(
-        //push/update data into the collection
-        { "blogPosts.postId": request.body.postID }, //point to target object to push/udate data
-        { $push: { "blogPosts.$.comments": commentData } }, //pointing to array students, and adding data
-        (err, obj) => {
-          if (err) {
-            return response.status(500).send(error);
-          }
-          response.send("added comment!");
-        }
-      );
-    }
-  );
+  console.log("COMMENTTSSS");
+  // MongoClient.connect(
+  //   CONNECTION_URL,
+  //   { useNewUrlParser: true },
+  //   (error, client) => {
+  //     if (error) {
+  //       throw error;
+  //     }
+  //     database = client.db(DATABASE_NAME); // pointing to database
+  //     postCollection = database.collection("post_data"); // point to collection
+  //     postCollection.updateOne(
+  //       //push/update data into the collection
+  //       { "blogPosts.postId": request.body.postID }, //point to target object to push/udate data
+  //       { $push: { "blogPosts.$.comments": commentData } }, //pointing to array students, and adding data
+  //       (err, obj) => {
+  //         if (err) {
+  //           return response.status(500).send(error);
+  //         }
+  //         response.send("added comment!");
+  //       }
+  //     );
+  //   }
+  // );
 });

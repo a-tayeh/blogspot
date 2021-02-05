@@ -76,7 +76,11 @@ export const Home = () => {
     </div>
   ) : (
     <div className="container">
-      <button onClick={() => setViewPost(false)}>go back</button>
+      <button class="goBack" onClick={() => setViewPost(false)}>
+        <p>
+          <i class="arrow left"></i>
+        </p>
+      </button>
       <CurrentPost
         cardBody={selectedPost.cardBody}
         cardTitle={selectedPost.cardTitle}

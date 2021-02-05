@@ -10,17 +10,20 @@ export const Blog = ({ handleLogout }) => {
       <Router>
         <nav>
           <Link to="/home">
-            <div className="blog-right">BLOG SPOT</div>
+            <h3 className="blog-right">BLOG SPOT</h3>
           </Link>
 
           <Link to="/create-post">
-            <div className="blog-right">Create Post</div>
+            <h3 className="blog-right">Create Post</h3>
           </Link>
 
           <Link to="/my-posts">
-            <div className="blog-right">My Posts</div>
+            <h3 className="blog-right">My Posts</h3>
           </Link>
-          <button onClick={handleLogout}>Logout</button>
+          <h3 className="blog-right" onClick={handleLogout}>
+            {" "}
+            Logout
+          </h3>
         </nav>
 
         <Switch>
