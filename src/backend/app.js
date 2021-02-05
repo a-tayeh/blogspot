@@ -39,6 +39,18 @@ app.get("/getBlogPosts", (request, response) => {
   });
 });
 
+app.post("/getPostComment", (request, response) => {
+  const postId = request.body.postId;
+  collection.find({}).toArray((error, result) => {
+    if (error) {
+      return response.status(500).send(error);
+    }
+    const resres = result[0].blogPosts.filter((post) => post.id === +postId);
+    console.log(resres);
+    response.json(resres[0].comments);
+  });
+});
+
 //route handler to send data
 app.post("/sendBlogPosts", (req, res) => {
   // when user enters info it will be stored in the body
@@ -84,7 +96,6 @@ app.post("/createNewPost", (request, response) => {
         contents: "",
         date: "",
         author: "",
-        comments:""
       },
     ],
   };
@@ -106,6 +117,37 @@ app.post("/createNewPost", (request, response) => {
             return response.status(500).send(error);
           }
           response.send("created new post!");
+        }
+      );
+    }
+  );
+});
+
+app.post("/addComments", (request, response) => {
+  const body = {
+    commentData: { author: "", comment: "", date: "" },
+    postId: "",
+  };
+  const commentData = request.body.commentData; // second step, use $push to push commentData into commentsArray
+  let postCollection;
+  MongoClient.connect(
+    CONNECTION_URL,
+    { useNewUrlParser: true },
+    (error, client) => {
+      if (error) {
+        throw error;
+      }
+      database = client.db(DATABASE_NAME); // pointing to database
+      postCollection = database.collection("post_data"); // point to collection
+      postCollection.updateOne(
+        //push/update data into the collection
+        { "blogPosts.postId": request.body.postID }, //point to target object to push/udate data
+        { $push: { "blogPosts.$.comments": commentData } }, //pointing to array students, and adding data
+        (err, obj) => {
+          if (err) {
+            return response.status(500).send(error);
+          }
+          response.send("added comment!");
         }
       );
     }

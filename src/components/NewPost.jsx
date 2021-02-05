@@ -1,5 +1,6 @@
 import React from "react";
 import firebase from "../firebase";
+import { useHistory } from "react-router-dom";
 
 export const NewPost = () => {
   const [postData, setPostData] = React.useState([]);
@@ -36,6 +37,7 @@ export const NewPost = () => {
   const onContentChange = (event) => {
     setNewContent(event.target.value);
   };
+  const history = useHistory();
 
   const addPost = (event) => {
     const author = firebase.auth().currentUser.email;
@@ -57,12 +59,12 @@ export const NewPost = () => {
     }).then(
       (result) => {
         console.log("data sent successfully");
-        window.location.reload(true);
       },
       (error) => {
         console.log("bro we got an error " + error);
       }
     );
+    window.open("http://localhost:3000/my-posts");
   };
 
   return (

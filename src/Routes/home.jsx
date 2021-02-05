@@ -39,6 +39,7 @@ export const Home = () => {
       cardDate: data.cardDate,
       cardBody: data.cardBody,
       author: data.author,
+      postId: data.postId,
     });
     setViewPost(true);
   };
@@ -52,6 +53,7 @@ export const Home = () => {
               cardDate: post.date,
               cardBody: post.contents,
               author: post.author || "",
+              postId: post.id,
             })
           }
         >
@@ -80,6 +82,7 @@ export const Home = () => {
         cardTitle={selectedPost.cardTitle}
         cardDate={selectedPost.cardDate}
         author={selectedPost.author}
+        postId={selectedPost.postId}
       />
     </div>
   );

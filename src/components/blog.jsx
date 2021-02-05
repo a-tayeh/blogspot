@@ -27,10 +27,14 @@ export const Blog = ({ handleLogout }) => {
           <Route exact path="/create-post">
             <CreatePost />
           </Route>
+
           <Route exact path="/my-posts">
             <MyPosts />
           </Route>
           <Route exact path="/home">
+            <Home />
+          </Route>
+          <Route exact path="/">
             <Home />
           </Route>
           {/* <Route exact path="/">
