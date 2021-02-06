@@ -45,7 +45,9 @@ app.post("/getPostComment", (request, response) => {
     if (error) {
       return response.status(500).send(error);
     }
-    const resres = result[0].blogPosts.filter((post) => post.id === +postId);
+    const resres = result[0].blogPosts.filter(
+      (post) => post.postId === +postId
+    );
     console.log(resres);
     response.json(resres[0].comments);
   });
@@ -55,16 +57,17 @@ app.post("/getPostComment", (request, response) => {
 app.post("/sendBlogPosts", (req, res) => {
   // when user enters info it will be stored in the body
   //req.data sends the stored infomation to express server
-  console.log("i am here");
+
   const data = req.body;
   const body = {
     title: data.title,
     contents: data.contents,
     date: data.date,
-    id: data.id,
+    postId: data.postId,
     author: data.author,
+    comments: [],
   };
-  console.log(body);
+  console.log(req.body);
   MongoClient.connect(
     CONNECTION_URL,
     { useNewUrlParser: true },
@@ -124,33 +127,29 @@ app.post("/createNewPost", (request, response) => {
 });
 
 app.post("/addComments", (request, response) => {
-  const body = {
-    commentData: { author: "", comment: "", date: "" },
-    postId: "",
-  };
   const commentData = request.body.commentData; // second step, use $push to push commentData into commentsArray
   let postCollection;
-  console.log("COMMENTTSSS");
-  // MongoClient.connect(
-  //   CONNECTION_URL,
-  //   { useNewUrlParser: true },
-  //   (error, client) => {
-  //     if (error) {
-  //       throw error;
-  //     }
-  //     database = client.db(DATABASE_NAME); // pointing to database
-  //     postCollection = database.collection("post_data"); // point to collection
-  //     postCollection.updateOne(
-  //       //push/update data into the collection
-  //       { "blogPosts.postId": request.body.postID }, //point to target object to push/udate data
-  //       { $push: { "blogPosts.$.comments": commentData } }, //pointing to array students, and adding data
-  //       (err, obj) => {
-  //         if (err) {
-  //           return response.status(500).send(error);
-  //         }
-  //         response.send("added comment!");
-  //       }
-  //     );
-  //   }
-  // );
+  console.log(request.body);
+  MongoClient.connect(
+    CONNECTION_URL,
+    { useNewUrlParser: true },
+    (error, client) => {
+      if (error) {
+        throw error;
+      }
+      database = client.db(DATABASE_NAME); // pointing to database
+      postCollection = database.collection("post_data"); // point to collection
+      postCollection.updateOne(
+        //push/update data into the collection
+        { "blogPosts.postId": request.body.postID }, //point to target object to push/udate data
+        { $push: { "blogPosts.$.comments": commentData } }, //pointing to array comments, and adding data
+        (err, obj) => {
+          if (err) {
+            return response.status(500).send(error);
+          }
+          response.send("added comment!");
+        }
+      );
+    }
+  );
 });

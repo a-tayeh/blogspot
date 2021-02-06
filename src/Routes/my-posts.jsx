@@ -36,11 +36,12 @@ export const MyPosts = () => {
       cardDate: data.cardDate,
       cardBody: data.cardBody,
       author: data.author,
+      postId: data.postId,
     });
     setViewPost(true);
   };
   return !viewPost ? (
-    <div className="container">
+    <div className="my-posts-container">
       {posts.map((post) => (
         <div
           onClick={() =>
@@ -49,21 +50,24 @@ export const MyPosts = () => {
               cardDate: post.date,
               cardBody: post.contents,
               author: post.author || "",
+              postId: post.postId,
             })
           }
         >
+          <br></br>
           <Card>
             <Card.Img variant="top" src="holder.js/100px180" />
             <Card.Body>
-              <Card.Title>{post.title}</Card.Title>
-              <p>{new Date(post.date)?.toDateString()}</p>
-              <p>{post?.author?.length > 0 ? post.author : ""}</p>
+              <Card.Title>{post?.title}</Card.Title>
+              <p>{new Date(post?.date)?.toDateString()}</p>
+              <p>{post?.author?.length > 0 ? post?.author : ""}</p>
               <Card.Text className="text-truncate">
                 {" "}
-                <button class="content-button">{post.contents}</button>{" "}
+                <button class="content-button">{post?.contents}</button>{" "}
               </Card.Text>
             </Card.Body>
           </Card>
+          <br></br>
         </div>
       ))}
     </div>
@@ -75,6 +79,7 @@ export const MyPosts = () => {
         cardTitle={selectedPost.cardTitle}
         cardDate={selectedPost.cardDate}
         author={selectedPost.author}
+        postId={selectedPost.postId}
       />
     </div>
   );

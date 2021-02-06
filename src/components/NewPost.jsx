@@ -43,7 +43,8 @@ export const NewPost = () => {
     const author = firebase.auth().currentUser.email;
 
     const data = {
-      id: postData[postData?.length - 1].id + 1,
+      postId:
+        postData?.length > 0 ? postData[postData?.length - 1].postId + 1 : 1,
       title: titleName,
       contents: newContent,
       date: currDate,
@@ -77,7 +78,7 @@ export const NewPost = () => {
         <input
           className="title"
           type="text"
-          placeHolder="title"
+          placeholder="title"
           size="39"
           required
           onChange={onTitleChange}
@@ -86,7 +87,7 @@ export const NewPost = () => {
         <br />
         <textarea
           className="content"
-          placeHolder="contents"
+          placeholder="contents"
           rows="8"
           cols="41"
           required

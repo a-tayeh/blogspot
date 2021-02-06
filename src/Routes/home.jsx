@@ -53,7 +53,7 @@ export const Home = () => {
               cardDate: post.date,
               cardBody: post.contents,
               author: post.author || "",
-              postId: post.id,
+              postId: post.postId,
             })
           }
         >

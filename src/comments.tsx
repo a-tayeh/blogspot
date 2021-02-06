@@ -40,10 +40,10 @@ export const Comments: React.FC<props> = ({ postId }) => {
             <Card.Img variant="top" src="holder.js/100px180" />
             <Card.Body>
               {/* <Card.Title>{comment.title}</Card.Title> */}
-              <p>{new Date(comment.date)?.toDateString()}</p>
+              <p>{new Date(comment?.date)?.toDateString()}</p>
               <p>{comment?.author?.length > 0 ? comment.author : ""}</p>
               <Card.Text>
-                {comment.comment}
+                {comment?.comment}
                 {/* {" "}
                 <button class="content-button">{comment.contents}</button>{" "} */}
               </Card.Text>
