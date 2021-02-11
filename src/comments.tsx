@@ -1,5 +1,6 @@
 import React from "react";
 import { Card } from "react-bootstrap";
+import firebase from "../src/firebase";
 
 type props = {
   postId: string;
@@ -8,8 +9,12 @@ export const Comments: React.FC<props> = ({ postId }) => {
   const [comments, setcomments] = React.useState([]);
   const [viewcomment, setViewcomment] = React.useState(false);
   const [articlePage, setArticlePage] = React.useState("");
+  const [currentUser, setCurrentUser] = React.useState<any>();
   //   const [selectedcomment, setSelectedcomment] = React.useState({});
   React.useEffect(() => {
+    const currentUser = firebase?.auth()?.currentUser?.email;
+    setCurrentUser(currentUser);
+
     const data = { postId: postId };
     fetch("http://localhost:3014/getPostComment", {
       method: "POST",
@@ -37,6 +42,8 @@ export const Comments: React.FC<props> = ({ postId }) => {
       {comments.map((comment: any) => (
         <div>
           <Card>
+            {comment.author === currentUser && <button>edit</button>}
+
             <Card.Img variant="top" src="holder.js/100px180" />
             <Card.Body>
               {/* <Card.Title>{comment.title}</Card.Title> */}

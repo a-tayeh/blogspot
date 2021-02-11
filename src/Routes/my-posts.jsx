@@ -3,13 +3,16 @@ import React from "react";
 import { Button, Card } from "react-bootstrap";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { CurrentPost } from "../components/current-post";
+import firebase from "../firebase";
 
 export const MyPosts = () => {
   const [posts, setPosts] = React.useState([]);
   const [viewPost, setViewPost] = React.useState(false);
   const [articlePage, setArticlePage] = React.useState("");
   const [selectedPost, setSelectedPost] = React.useState({});
+  const [currentUser, setCurrentUser] = React.useState();
   React.useEffect(() => {
+    setCurrentUser(firebase?.auth()?.currentUser?.email);
     fetch("http://localhost:3014/getBlogPosts", {
       method: "GET",
       headers: {
@@ -42,38 +45,45 @@ export const MyPosts = () => {
   };
   return !viewPost ? (
     <div className="my-posts-container">
-      {posts.map((post) => (
-        <div
-          onClick={() =>
-            handleClickedPost({
-              cardTitle: post.title,
-              cardDate: post.date,
-              cardBody: post.contents,
-              author: post.author || "",
-              postId: post.postId,
-            })
-          }
-        >
-          <br></br>
-          <Card>
-            <Card.Img variant="top" src="holder.js/100px180" />
-            <Card.Body>
-              <Card.Title>{post?.title}</Card.Title>
-              <p>{new Date(post?.date)?.toDateString()}</p>
-              <p>{post?.author?.length > 0 ? post?.author : ""}</p>
-              <Card.Text className="text-truncate">
-                {" "}
-                <button class="content-button">{post?.contents}</button>{" "}
-              </Card.Text>
-            </Card.Body>
-          </Card>
-          <br></br>
-        </div>
-      ))}
+      {posts.map(
+        (post) =>
+          post.author === currentUser && (
+            <div
+              onClick={() =>
+                handleClickedPost({
+                  cardTitle: post.title,
+                  cardDate: post.date,
+                  cardBody: post.contents,
+                  author: post.author || "",
+                  postId: post.postId,
+                })
+              }
+            >
+              <br></br>
+              <Card>
+                <Card.Img variant="top" src="holder.js/100px180" />
+                <Card.Body>
+                  <Card.Title>{post?.title}</Card.Title>
+                  <p>{new Date(post?.date)?.toDateString()}</p>
+                  <p>{post?.author?.length > 0 ? post?.author : ""}</p>
+                  <Card.Text className="text-truncate" line={4}>
+                    {" "}
+                    <button class="content-button">
+                      {post?.contents}
+                    </button>{" "}
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+              <br></br>
+            </div>
+          )
+      )}
     </div>
   ) : (
     <div className="container">
-      <button onClick={() => setViewPost(false)}>go back</button>
+      <button class="goBack" onClick={() => setViewPost(false)}>
+        Back
+      </button>
       <CurrentPost
         cardBody={selectedPost.cardBody}
         cardTitle={selectedPost.cardTitle}

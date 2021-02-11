@@ -77,9 +77,7 @@ export const Home = () => {
   ) : (
     <div className="container">
       <button class="goBack" onClick={() => setViewPost(false)}>
-        <p>
-          <i class="arrow left"></i>
-        </p>
+        Back
       </button>
       <CurrentPost
         cardBody={selectedPost.cardBody}

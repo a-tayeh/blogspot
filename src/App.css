@@ -22,10 +22,11 @@ button {
 .goBack {
   border: solid;
   outline: none;
+  text: black;
   border-radius: 15px 15px;
   width: 5%;
   padding: 10px 0;
-  color: rgb(255, 251, 251);
+  color: rgb(0, 0, 0);
   background: white;
   border-color: #000000;
   cursor: pointer;

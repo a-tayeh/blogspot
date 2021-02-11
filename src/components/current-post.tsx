@@ -20,8 +20,9 @@ export const CurrentPost: React.FC<props> = ({
   // const [commentData, setCommentData] = React.useState([]);
   const [postData, setPostData] = React.useState([]);
   const [newComment, setComment] = React.useState("[]");
+  const [newContent, setContent] = React.useState({ content: cardBody });
   const currDate = Date().toLocaleString();
-  // const [selectedSite, setSelectedSite] = React.useState({});
+  const [edit, setEdit] = React.useState(false);
 
   React.useEffect(() => {
     fetch("http://localhost:3014/getBlogPosts", {
@@ -44,10 +45,16 @@ export const CurrentPost: React.FC<props> = ({
       );
   }, []); // [] = runs code before the component
 
+  const onContentChange = (event: any) => {
+    setContent({ ...newContent, content: event.target.value });
+  };
   const onCommentChange = (event: any) => {
     setComment(event.target.value);
   };
-
+  const onSave = () => {
+    console.log(newContent);
+    setEdit(false);
+  };
   const addComment = (event: any) => {
     const author = firebase.auth().currentUser?.email;
 
@@ -75,14 +82,51 @@ export const CurrentPost: React.FC<props> = ({
   };
 
   const date = new Date(cardDate);
-  return (
+  return !edit ? (
     <div className="container">
       <br></br>
-      <h3>{cardTitle}</h3>
+      <button>Delete Post</button>
 
+      <button onClick={() => setEdit(true)}>Edit</button>
+
+      <h3>{cardTitle}</h3>
       <h4>{date?.toDateString()}</h4>
       <h4>{author}</h4>
-      <p>{cardBody}</p>
+      <p>{newContent.content}</p>
+      <div>
+        <br></br>
+        <br></br>
+        <textarea
+          className="center"
+          placeholder="comment"
+          onChange={onCommentChange}
+        ></textarea>
+        <br></br>
+        <button className="post" onClick={addComment}>
+          {" "}
+          post
+        </button>
+        <br></br>
+        <br></br>
+        <br></br>
+      </div>
+      <br></br>
+      <div>
+        <Comments postId={postId} />
+      </div>
+    </div>
+  ) : (
+    <div className="container">
+      <br></br>
+      <button>Delete Post</button>
+      <button onClick={onSave}>Save</button>
+      <button onClick={() => setEdit(false)}>Cancel</button>
+      <h3>{cardTitle}</h3>
+      <h4>{date?.toDateString()}</h4>
+      <h4>{author}</h4>
+      <textarea onChange={(event) => onContentChange(event)}>
+        {newContent.content}
+      </textarea>
       <div>
         <br></br>
         <br></br>
