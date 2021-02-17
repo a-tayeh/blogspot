@@ -31,6 +31,7 @@ export const MyPosts = () => {
           console.log("bro we got an error " + error);
         }
       );
+    
   }, []);
 
   const handleClickedPost = (data) => {
@@ -42,6 +43,12 @@ export const MyPosts = () => {
       postId: data.postId,
     });
     setViewPost(true);
+    document
+    ?.getElementById("blogPic")
+    ?.setAttribute(
+      "src",
+      `http://localhost:3014/getPic`
+    );
   };
   return !viewPost ? (
     <div className="my-posts-container">
@@ -61,7 +68,7 @@ export const MyPosts = () => {
             >
               <br></br>
               <Card>
-                <Card.Img variant="top" src="holder.js/100px180" />
+                <Card.Img variant="top" src="" id="blogPic"/> 
                 <Card.Body>
                   <Card.Title>{post?.title}</Card.Title>
                   <p>{new Date(post?.date)?.toDateString()}</p>

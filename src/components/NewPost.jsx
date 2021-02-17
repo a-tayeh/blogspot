@@ -67,14 +67,53 @@ export const NewPost = () => {
     );
     window.open("http://localhost:3000/my-posts");
   };
+  const uploadPic = (e) => {
+    e.preventDefault();
+    const file = document.getElementById("inputGroupFile01").files;
+    let formData = new FormData();
+    formData.append('blogImg', file[0]);
+    Object.defineProperty(file[0], 'name', {
+      writable: true,
+      value: `${postData?.length > 0 ? postData[postData?.length - 1].postId + 1 : 1}-pic`
+    });
+    fetch("http://localhost:3014/uploadPic", { method: "POST", body: formData }).then(
+      (r) => {
+        console.log(r);
+      }
+    );
+    console.log(file[0]);
+  };
 
+  
   return (
     <div className="justify-center">
       <form>
         <h1>Create New Post</h1>
-        <input type="file" className="filetype" id="group_image" />
         <p> Date posted: {currDate}</p>
         <br></br>
+        <div className="input-group mb-3">
+          {" "}
+          <div className="custom-file">
+            {" "}
+            <input
+              type="file"
+              className="imageInput"
+              id="inputGroupFile01"
+              aria-describedby="inputGroupFileAddon01"
+              name = "blogImg"
+          
+            />{" "}
+            <label className="custom-file-label" htmlFor="inputGroupFile01"     style={{width: "640px"}}>
+              {" "}
+              Choose file{" "}
+            </label>{" "}
+          </div>{" "}
+        </div>{" "}
+        <button type="button" className="btn btn-primary" onClick={uploadPic} style={{width: "640px"}}>
+          {" "}
+          Upload{" "}
+        </button>{" "}
+
         <input
           className="title"
           type="text"

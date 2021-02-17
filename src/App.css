@@ -19,6 +19,40 @@ button {
   white-space: nowrap;
 }
 
+.btn-delete{
+  border: none;
+  outline: none;
+  border-radius: 15px 15px;
+  width: 10%;
+  padding: 5px 0;
+  color: #fff;
+  font-size: 16px;
+  letter-spacing: 1px;
+  background: #000000;
+  cursor: pointer;
+  white-space: nowrap;
+  position: absolute;
+  right: 700px;
+
+}
+.btn-edit{
+  border: none;
+  outline: none;
+  border-radius: 15px 15px;
+  width: 10%;
+  padding: 5px 0;
+  color: #fff;
+  font-size: 16px;
+  letter-spacing: 1px;
+  background: #000000;
+  cursor: pointer;
+  white-space: nowrap;
+  position: absolute;
+  right: 500px;
+
+}
+
+
 .goBack {
   border: solid;
   outline: none;
@@ -58,14 +92,29 @@ button {
   cursor: pointer;
   white-space: nowrap;
   position: absolute;
-  right: 548px;
+  right: 700px;
 }
 
 .btn-save {
   border: none;
   outline: none;
   border-radius: 15px 15px;
-  width: 2%;
+  width: 15%;
+  padding: 5px 0;
+  color: #fff;
+  font-size: 20px;
+  letter-spacing: 1px;
+  background: #000000;
+  cursor: pointer;
+  white-space: nowrap;
+  position: absolute;
+  right: 300px;
+}
+.btn-cancel {
+  border: none;
+  outline: none;
+  border-radius: 15px 15px;
+  width: 10%;
   padding: 5px 0;
   color: #fff;
   font-size: 16px;
@@ -74,12 +123,13 @@ button {
   cursor: pointer;
   white-space: nowrap;
   position: absolute;
-  right: 239px;
+  right: 700px;
 }
+
 
 .my-posts-container {
   position: absolute;
-  right: 530px;
+  right: 700px;
 }
 
 .c .content-button {
@@ -210,9 +260,6 @@ button {
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
 }
 
-.btn-save {
-  width: 15%;
-}
 input[type="text"] {
   width: 70%;
   padding: 12px 20px;
@@ -237,7 +284,7 @@ form {
   padding: 1.5em;
   border-radius: 1px;
   width: 50%;
-  left: 450px;
+  left: 600px;
 }
 
 .box {
@@ -255,7 +302,13 @@ form {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
+  position: absolute;
+  left:100px;
 }
 .grid > div {
   flex-basis: calc(33.33333% - 40px);
 }
+.comment{
+width:600px;
+}
+

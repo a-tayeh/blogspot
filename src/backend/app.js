@@ -2,18 +2,73 @@ const Express = require("express");
 const BodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 const cors = require("cors");
+const objectid = require("objectid");
 
 const CONNECTION_URL =
   "mongodb+srv://mireeantar:0sPzdXp7sm6mre1y@cluster0.fmjkv.mongodb.net/blogspot?retryWrites=true&w=majority";
 const DATABASE_NAME = "blogspot";
 
-var app = Express();
-
+const app = Express();
+const GridFsStorage = require('multer-gridfs-storage');
+const multer = require("multer")
+const mongoose = require('mongoose')
+const Grid = require('gridfs-stream')
 app.use(BodyParser.json());
 //what is extened false and extend true?
 app.use(BodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: "*" }));
-var database, collection;
+let database, collection;
+const crypto = require("crypto")
+// Create storage engine
+
+
+
+const conn = mongoose.createConnection(CONNECTION_URL)
+let gfs;
+conn.once('open', () => {
+    //initialize our stream
+    gfs = Grid(conn.db, mongoose.mongo)
+    gfs.collection('blog_pics')
+    console.log("we're in")
+})
+
+const storage = new GridFsStorage({
+  url: CONNECTION_URL,
+  file: (req, file) => {
+      return new Promise(
+          (resolve, reject) => {
+            console.log(file)
+            console.log(req.body)
+            console.log(file.name)
+                     const fileInfo = {
+                  filename: "10-pic",
+                  bucketName: "blog_pics"
+              }
+              resolve(fileInfo)
+
+          }
+      )
+  }
+})
+
+const upload = multer({ storage });
+
+// const storage = new GridFsStorage({
+//   url: CONNECTION_URL,
+//   file: (req, file) => {
+//     return new Promise((resolve, reject) => {
+//       crypto.randomBytes(16, (err, buf) => {
+//         if (err) {
+//           console.log("we got issues")
+//           return reject(err);
+//         }
+//         const filename = file.originalname;
+//         const fileInfo = { filename: filename, bucketName: "blog_pics" };
+//         resolve(fileInfo);
+//       });
+//     });
+//   },
+// });
 
 app.listen(3014, () => {
   MongoClient.connect(
@@ -39,6 +94,37 @@ app.get("/getBlogPosts", (request, response) => {
   });
 });
 
+
+app.get("/getPic", (req, res) => {
+  gfs.files.findOne({ filename: "10-pic" }, (err, file) => {
+    if (!file || file.length === 0) {
+      return res.status(404).json({ err: "No file exists" });
+    }
+    if (file.contentType === "image/jpeg" || file.contentType === "image/png") {
+      const readstream = gfs.createReadStream(file.filename);
+      readstream.pipe(res);
+    } else {
+      res.status(404).json({ err: "Not an image" });
+    }
+  });
+});
+
+
+// app.post("/uploadPic", upload.single("blogImg"), (req, res, err) => {
+//   console.log(req.body)
+//   if (err){
+//     console.log("its here")
+//     throw err;
+//   } 
+//   res.status(201).send();
+// });
+
+app.post("/uploadPic",upload.single("blogImg"),(req,res)=>{
+  res.json({file:req.file})
+  })
+
+
+
 app.post("/getPostComment", (request, response) => {
   const postId = request.body.postId;
   collection.find({}).toArray((error, result) => {
@@ -48,7 +134,6 @@ app.post("/getPostComment", (request, response) => {
     const resres = result[0].blogPosts.filter(
       (post) => post.postId === +postId
     );
-    console.log(resres);
     response.json(resres[0].comments);
   });
 });
@@ -67,7 +152,6 @@ app.post("/sendBlogPosts", (req, res) => {
     author: data.author,
     comments: [],
   };
-  console.log(req.body);
   MongoClient.connect(
     CONNECTION_URL,
     { useNewUrlParser: true },
@@ -129,7 +213,6 @@ app.post("/createNewPost", (request, response) => {
 app.post("/addComments", (request, response) => {
   const commentData = request.body.commentData; // second step, use $push to push commentData into commentsArray
   let postCollection;
-  console.log(request.body);
   MongoClient.connect(
     CONNECTION_URL,
     { useNewUrlParser: true },
@@ -148,6 +231,98 @@ app.post("/addComments", (request, response) => {
             return response.status(500).send(error);
           }
           response.send("added comment!");
+        }
+      );
+    }
+  );
+});
+
+app.put("/updatePosts", (request, response) => {
+  let classCollection;
+  MongoClient.connect(
+    CONNECTION_URL,
+    { useNewUrlParser: true },
+    (error, client) => {
+      if (error) {
+        throw error;
+      }
+      database = client.db(DATABASE_NAME);
+      classCollection = database.collection("post_data");
+      console.log(request.body);
+      classCollection.updateOne(
+        //determine the condition on which object to modify
+        { "blogPosts.postId": +request.body.postId },
+        {
+          $set: {
+            "blogPosts.$.contents": request.body.newContents.content,
+            "blogPosts.$.title": request.body.newContents.title,
+          },
+        },
+        (err, obj) => {
+          if (err) {
+            return response.status(500).send(error);
+          }
+          response.send("update the posts!");
+        }
+      );
+    }
+  );
+});
+
+app.delete("/removePosts", (request, response) => {
+  let classCollection;
+  MongoClient.connect(
+    CONNECTION_URL,
+    { useNewUrlParser: true },
+    (error, client) => {
+      if (error) {
+        throw error;
+      }
+      database = client.db(DATABASE_NAME);
+      classCollection = database.collection("post_data");
+      console.log(request.body);
+      classCollection.update(
+        //determine the condition on which object to modify
+        { "blogPosts.postId": +request.body.postId },
+        { $pull: { blogPosts: { postId: +request.body.postId } } },
+
+        (err, obj) => {
+          if (err) {
+            return response.status(500).send(error);
+          }
+          response.send("deleted the posts!");
+        }
+      );
+    }
+  );
+});
+
+app.delete("/removeComments", (request, response) => {
+  let classCollection;
+  MongoClient.connect(
+    CONNECTION_URL,
+    { useNewUrlParser: true },
+    (error, client) => {
+      if (error) {
+        throw error;
+      }
+      database = client.db(DATABASE_NAME);
+      classCollection = database.collection("post_data");
+      console.log(request.body);
+      classCollection.update(
+        //determine the condition on which object to modify
+        { "blogPosts.postId": +request.body.postId },
+        {
+          $pull: {
+            "blogPosts.$.comments": { commentId: +request.body.commentId },
+          },
+        },
+
+        (err, obj) => {
+          if (err) {
+            return response.status(500).send(error);
+          }
+          response.send("deleted the posts!");
         }
       );
     }

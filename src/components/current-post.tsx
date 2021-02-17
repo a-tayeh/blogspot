@@ -21,8 +21,11 @@ export const CurrentPost: React.FC<props> = ({
   const [postData, setPostData] = React.useState([]);
   const [newComment, setComment] = React.useState("[]");
   const [newContent, setContent] = React.useState({ content: cardBody });
+  const [newTitle, setTitle] = React.useState({ title: cardTitle });
   const currDate = Date().toLocaleString();
   const [edit, setEdit] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState<any>();
+  const [comments, setcomments] = React.useState([]);
 
   React.useEffect(() => {
     fetch("http://localhost:3014/getBlogPosts", {
@@ -43,6 +46,36 @@ export const CurrentPost: React.FC<props> = ({
           console.log("bro we got an error " + error);
         }
       );
+      const currentUser = firebase?.auth()?.currentUser?.email;
+    setCurrentUser(currentUser);
+
+    const data = { postId: postId };
+    fetch("http://localhost:3014/getPostComment", {
+      method: "POST",
+      headers: {
+        //accepts json
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json()) //converts to json
+      .then(
+        (result) => {
+          const newData = result;
+          setcomments(newData);
+        },
+        (error) => {
+          console.log("bro we got an error " + error);
+        }
+      );
+          document
+            ?.getElementById("blogPic")
+            ?.setAttribute(
+              "src",
+              `http://localhost:3014/getPic`
+            );
+
   }, []); // [] = runs code before the component
 
   const onContentChange = (event: any) => {
@@ -52,14 +85,31 @@ export const CurrentPost: React.FC<props> = ({
     setComment(event.target.value);
   };
   const onSave = () => {
-    console.log(newContent);
+    const newBlogData={postId:postId, newContents:newContent};
+    fetch("http://localhost:3014/updatePosts", {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newBlogData),
+    }).then(
+      (result) => {
+        console.log("data sent successfully");
+      },
+      (error) => {
+        console.log("bro we got an error " + error);
+      }
+    );
+
     setEdit(false);
+   
   };
   const addComment = (event: any) => {
     const author = firebase.auth().currentUser?.email;
 
     const data = {
-      commentData: { comment: newComment, date: currDate, author: author },
+      commentData: { comment: newComment, date: currDate, author: author, commentId:comments.length>0 ? comments?.length+1:1 },
 
       postID: postId,
     };
@@ -81,18 +131,40 @@ export const CurrentPost: React.FC<props> = ({
     );
   };
 
+  const onDelete=()=>{
+    const deleteData={postId:postId};
+    fetch("http://localhost:3014/removePosts", {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(deleteData),
+    }).then(
+      (result) => {
+        console.log("data sent successfully");
+        window.location.reload(true);
+      },
+      (error) => {
+        console.log("bro we got an error " + error);
+      }
+    );
+  }
+
+
   const date = new Date(cardDate);
   return !edit ? (
     <div className="container">
       <br></br>
-      <button>Delete Post</button>
-
-      <button onClick={() => setEdit(true)}>Edit</button>
-
+      <button onClick={onDelete}  className="btn-delete">Delete Post</button>
+      <button className="btn-edit" onClick={() => setEdit(true)}>Edit</button>
       <h3>{cardTitle}</h3>
+      <img src="" id="blogPic"/>
       <h4>{date?.toDateString()}</h4>
       <h4>{author}</h4>
       <p>{newContent.content}</p>
+      
+      
       <div>
         <br></br>
         <br></br>
@@ -112,16 +184,15 @@ export const CurrentPost: React.FC<props> = ({
       </div>
       <br></br>
       <div>
-        <Comments postId={postId} />
+        <Comments  comments = {comments} currentUser={currentUser} postId={postId}/>
       </div>
     </div>
   ) : (
     <div className="container">
       <br></br>
-      <button>Delete Post</button>
-      <button onClick={onSave}>Save</button>
-      <button onClick={() => setEdit(false)}>Cancel</button>
-      <h3>{cardTitle}</h3>
+      <button className="btn-save" onClick={onSave}>Save</button>
+      <button className="btn-cancel" onClick={() => setEdit(false)}>Cancel</button>
+      <input value ={cardTitle} onChange={(event) => onContentChange(event)}/>
       <h4>{date?.toDateString()}</h4>
       <h4>{author}</h4>
       <textarea onChange={(event) => onContentChange(event)}>
@@ -146,7 +217,7 @@ export const CurrentPost: React.FC<props> = ({
       </div>
       <br></br>
       <div>
-        <Comments postId={postId} />
+      <Comments  comments = {comments} currentUser={currentUser} postId={postId}/>
       </div>
     </div>
   );
