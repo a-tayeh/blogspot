@@ -1,6 +1,5 @@
 import React from "react";
 import firebase from "../firebase";
-import { useHistory } from "react-router-dom";
 
 export const NewPost = () => {
   const [postData, setPostData] = React.useState([]);
@@ -37,7 +36,6 @@ export const NewPost = () => {
   const onContentChange = (event) => {
     setNewContent(event.target.value);
   };
-  const history = useHistory();
 
   const addPost = (event) => {
     const author = firebase.auth().currentUser.email;
@@ -71,20 +69,17 @@ export const NewPost = () => {
     e.preventDefault();
     const file = document.getElementById("inputGroupFile01").files;
     let formData = new FormData();
-    formData.append('blogImg', file[0]);
-    Object.defineProperty(file[0], 'name', {
-      writable: true,
-      value: `${postData?.length > 0 ? postData[postData?.length - 1].postId + 1 : 1}-pic`
+    formData.append("blogImg", file[0]);
+
+    fetch("http://localhost:3014/uploadPic", {
+      method: "POST",
+      body: formData,
+    }).then((r) => {
+      console.log(r);
     });
-    fetch("http://localhost:3014/uploadPic", { method: "POST", body: formData }).then(
-      (r) => {
-        console.log(r);
-      }
-    );
     console.log(file[0]);
   };
 
-  
   return (
     <div className="justify-center">
       <form>
@@ -100,20 +95,27 @@ export const NewPost = () => {
               className="imageInput"
               id="inputGroupFile01"
               aria-describedby="inputGroupFileAddon01"
-              name = "blogImg"
-          
+              name="blogImg"
             />{" "}
-            <label className="custom-file-label" htmlFor="inputGroupFile01"     style={{width: "640px"}}>
+            <label
+              className="custom-file-label"
+              htmlFor="inputGroupFile01"
+              style={{ width: "640px" }}
+            >
               {" "}
               Choose file{" "}
             </label>{" "}
           </div>{" "}
         </div>{" "}
-        <button type="button" className="btn btn-primary" onClick={uploadPic} style={{width: "640px"}}>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={uploadPic}
+          style={{ width: "640px" }}
+        >
           {" "}
           Upload{" "}
         </button>{" "}
-
         <input
           className="title"
           type="text"

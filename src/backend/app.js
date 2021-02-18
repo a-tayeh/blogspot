@@ -2,73 +2,45 @@ const Express = require("express");
 const BodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 const cors = require("cors");
-const objectid = require("objectid");
-
+const app = Express();
+const GridFsStorage = require("multer-gridfs-storage");
+const multer = require("multer");
+const mongoose = require("mongoose");
+const Grid = require("gridfs-stream");
 const CONNECTION_URL =
   "mongodb+srv://mireeantar:0sPzdXp7sm6mre1y@cluster0.fmjkv.mongodb.net/blogspot?retryWrites=true&w=majority";
 const DATABASE_NAME = "blogspot";
-
-const app = Express();
-const GridFsStorage = require('multer-gridfs-storage');
-const multer = require("multer")
-const mongoose = require('mongoose')
-const Grid = require('gridfs-stream')
 app.use(BodyParser.json());
 //what is extened false and extend true?
 app.use(BodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: "*" }));
 let database, collection;
-const crypto = require("crypto")
-// Create storage engine
+let numOfPosts = 1;
 
-
-
-const conn = mongoose.createConnection(CONNECTION_URL)
+const conn = mongoose.createConnection(CONNECTION_URL);
 let gfs;
-conn.once('open', () => {
-    //initialize our stream
-    gfs = Grid(conn.db, mongoose.mongo)
-    gfs.collection('blog_pics')
-    console.log("we're in")
-})
+//initialize our stream
+conn.once("open", () => {
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection("blog_pics");
+});
 
+// Create storage engine
 const storage = new GridFsStorage({
   url: CONNECTION_URL,
   file: (req, file) => {
-      return new Promise(
-          (resolve, reject) => {
-            console.log(file)
-            console.log(req.body)
-            console.log(file.name)
-                     const fileInfo = {
-                  filename: "10-pic",
-                  bucketName: "blog_pics"
-              }
-              resolve(fileInfo)
-
-          }
-      )
-  }
-})
+    return new Promise((resolve, reject) => {
+      console.log(numOfPosts);
+      const fileInfo = {
+        filename: `${numOfPosts}-pic`,
+        bucketName: "blog_pics",
+      };
+      resolve(fileInfo);
+    });
+  },
+});
 
 const upload = multer({ storage });
-
-// const storage = new GridFsStorage({
-//   url: CONNECTION_URL,
-//   file: (req, file) => {
-//     return new Promise((resolve, reject) => {
-//       crypto.randomBytes(16, (err, buf) => {
-//         if (err) {
-//           console.log("we got issues")
-//           return reject(err);
-//         }
-//         const filename = file.originalname;
-//         const fileInfo = { filename: filename, bucketName: "blog_pics" };
-//         resolve(fileInfo);
-//       });
-//     });
-//   },
-// });
 
 app.listen(3014, () => {
   MongoClient.connect(
@@ -81,6 +53,12 @@ app.listen(3014, () => {
       database = client.db(DATABASE_NAME);
       collection = database.collection("post_data");
       console.log("Connected to `" + DATABASE_NAME + "`!");
+      collection.find({}).toArray((error, result) => {
+        numOfPosts =
+          result[0]?.blogPosts?.length > 0
+            ? result[0].blogPosts[result[0].blogPosts?.length - 1]?.postId + 1
+            : 1;
+      });
     }
   );
 });
@@ -94,9 +72,8 @@ app.get("/getBlogPosts", (request, response) => {
   });
 });
 
-
-app.get("/getPic", (req, res) => {
-  gfs.files.findOne({ filename: "10-pic" }, (err, file) => {
+app.get("/getPic/:picName", (req, res) => {
+  gfs.files.findOne({ filename: req.params.picName }, (err, file) => {
     if (!file || file.length === 0) {
       return res.status(404).json({ err: "No file exists" });
     }
@@ -109,21 +86,9 @@ app.get("/getPic", (req, res) => {
   });
 });
 
-
-// app.post("/uploadPic", upload.single("blogImg"), (req, res, err) => {
-//   console.log(req.body)
-//   if (err){
-//     console.log("its here")
-//     throw err;
-//   } 
-//   res.status(201).send();
-// });
-
-app.post("/uploadPic",upload.single("blogImg"),(req,res)=>{
-  res.json({file:req.file})
-  })
-
-
+app.post("/uploadPic", upload.single("blogImg"), (req, res) => {
+  res.json({ file: req.file });
+});
 
 app.post("/getPostComment", (request, response) => {
   const postId = request.body.postId;
